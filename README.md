@@ -23,11 +23,21 @@ Threat model: docs/threat-models/security-auditor.md
 ---
 
 ### ScopedDeveloper
-Write access scoped to a single named S3 bucket using a custom IAM policy.
-No access to any other bucket or any other AWS service.
+Write access scoped to a single named S3 bucket using a custom IAM policy,
+with a permission boundary enforcing an S3-only ceiling.
 
-Demonstrates: custom policy authoring, resource-level scoping, action-level
-scoping within a single service, least-privilege for application access.
+Demonstrates: custom policy authoring, resource-level scoping, two-statement
+S3 policy structure (bucket ARN for ListBucket, object ARN for GetObject and
+PutObject), permission boundary as a meaningful ceiling distinct from the
+identity policy, and verified access denial to other buckets and all non-S3
+services.
+
+Effective permissions are the intersection of the identity policy and the
+boundary. The identity policy scopes access to one bucket. The boundary caps
+the maximum to S3 only. Attaching AdministratorAccess to this role would
+still yield no IAM, no EC2, no KMS. Only S3. The boundary proves this
+through verified CLI output showing AccessDenied on a second bucket and
+UnauthorizedOperation on EC2.
 
 Threat model: docs/threat-models/scoped-developer.md
 
