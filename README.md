@@ -1,6 +1,6 @@
 # IAM Least-Privilege Role Designs
 
-Three IAM roles demonstrating least-privilege access patterns for common
+Four IAM roles demonstrating least-privilege access patterns for common
 enterprise use cases, each with a documented threat model covering blast
 radius, attack scenarios, and design rationale.
 
@@ -51,6 +51,26 @@ Demonstrates: cross-account trust pattern, ExternalId condition, defense
 against confused deputy, temporary credential delegation.
 
 Threat model: docs/threat-models/cross-account-readonly.md
+
+---
+
+### EC2S3ReadRole
+Read-only access role for an EC2 instance, demonstrating the non-human
+identity pattern. The trust policy names ec2.amazonaws.com as the principal
+rather than a human IAM user. AWS issues temporary credentials automatically
+through the instance metadata service at 169.254.169.254, a link-local
+address reachable only from within the instance itself. No access keys are
+stored anywhere.
+
+Demonstrates: service principal vs user principal in trust policy design,
+instance metadata service credential issuance, non-human identity access
+pattern, and why this pattern eliminates the stored credential risk present
+in access key based authentication. This is the same principle applied to
+AI agent identity through Amazon Bedrock AgentCore Identity: the agent
+receives a role, AWS handles credential issuance automatically, and no
+secrets are stored anywhere in the system.
+
+Threat model: docs/threat-models/ec2-s3-read-role.md
 
 ---
 
