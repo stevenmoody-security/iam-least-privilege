@@ -117,6 +117,7 @@ allow AWS to handle credential issuance automatically. Both eliminate stored
 credentials entirely. The difference is that EC2 instance roles attach to
 servers, while AgentCore Identity attaches to AI agents. The security
 principle is identical.
+
 ---
 ## Background
 
