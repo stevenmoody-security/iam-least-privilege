@@ -72,8 +72,52 @@ secrets are stored anywhere in the system.
 
 Threat model: docs/threat-models/ec2-s3-read-role.md
 
+
 ---
 
+## Authentication Decision Matrix
+
+When securing access in AWS environments, the authentication mechanism depends
+on where the resource being accessed lives and what kind of identity is making
+the request.
+
+### IAM Roles (SigV4)
+Use when: the resource lives inside AWS. Lambda functions, DynamoDB tables,
+S3 buckets, and any other AWS-native service authenticate through IAM roles.
+AWS handles credential issuance and signing automatically. No secrets are
+stored anywhere.
+
+Example: EC2S3ReadRole in this repository. The EC2 instance receives a role,
+AWS issues temporary credentials through the instance metadata service, and
+the application makes S3 API calls without storing any access keys.
+
+### API Keys
+Use when: accessing an API Gateway endpoint where the data is not sensitive
+and low friction matters more than strong authentication guarantees. API keys
+are simple shared secrets passed in request headers. Appropriate for
+non-sensitive integrations where OAuth overhead is not justified.
+
+### JWT Two-Legged OAuth (2LO)
+Use when: the resource lives outside your AWS account in a separate trust
+domain. IAM does not reach external systems, so a standards-based token is
+required. Two-Legged OAuth is machine-to-machine with no human user involved.
+The client authenticates, receives a signed JSON Web Token, and presents it
+to the external service. Any standards-compliant system can verify the token
+without calling back to AWS.
+
+Example: an AI agent in AWS needing to call an external partner API. The
+agent authenticates using 2LO, receives a JWT, and presents it to the
+partner service. This is the pattern demonstrated in the AWS Summit SEC307
+workshop for cross-trust-domain tool access.
+
+### The EC2 to AgentCore Connection
+The EC2 instance role pattern is the direct conceptual precursor to Amazon
+Bedrock AgentCore Identity. Both assign a role to a compute resource. Both
+allow AWS to handle credential issuance automatically. Both eliminate stored
+credentials entirely. The difference is that EC2 instance roles attach to
+servers, while AgentCore Identity attaches to AI agents. The security
+principle is identical.
+---
 ## Background
 
 This project is part of a broader cloud security portfolio built during my
@@ -83,3 +127,4 @@ applied to classified systems in operational environments, translated into
 AWS-native IAM constructs.
 
 Active TS/SCI | AWS SAA | SSCP | Relocating to Raleigh, NC February 2027
+
