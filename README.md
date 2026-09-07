@@ -122,10 +122,9 @@ principle is identical.
 ## Background
 
 This project is part of a broader cloud security portfolio built during my
-transition from U.S. Army service to cloud security engineering. The access
+transition from U.S. Army service to cloud security. The access
 control patterns demonstrated here reflect the same least-privilege principles
 applied to classified systems in operational environments, translated into
 AWS-native IAM constructs.
 
-Active TS/SCI | AWS SAA | SSCP | Relocating to Raleigh, NC February 2027
-
+Active TS/SCI | AWS SAA | SSCP | Relocating to Raleigh, NC December 2026
